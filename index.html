@@ -45,15 +45,22 @@
         // Controls
         let leftPressed = false;
         let rightPressed = false;
+        let upPressed = false;
+        let downPressed = false;
 
+        // Handle key presses
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') leftPressed = true;
             if (e.key === 'ArrowRight') rightPressed = true;
+            if (e.key === 'ArrowUp') upPressed = true;
+            if (e.key === 'ArrowDown') downPressed = true;
         });
 
         document.addEventListener('keyup', (e) => {
             if (e.key === 'ArrowLeft') leftPressed = false;
             if (e.key === 'ArrowRight') rightPressed = false;
+            if (e.key === 'ArrowUp') upPressed = false;
+            if (e.key === 'ArrowDown') downPressed = false;
         });
 
         // Create new turd
@@ -62,7 +69,7 @@
             turds.push({ x: x, y: -turdHeight });
         }
 
-        // Draw donkey (simple rectangle representation)
+        // Draw donkey
         function drawDonkey() {
             ctx.fillStyle = 'gray';
             ctx.fillRect(donkey.x, donkey.y, donkey.width, donkey.height);
@@ -80,13 +87,19 @@
             });
         }
 
-        // Move donkey
+        // Move donkey with boundary checking
         function moveDonkey() {
             if (leftPressed && donkey.x > 0) {
                 donkey.x -= donkey.speed;
             }
             if (rightPressed && donkey.x < canvas.width - donkey.width) {
                 donkey.x += donkey.speed;
+            }
+            if (upPressed && donkey.y > 0) {
+                donkey.y -= donkey.speed;
+            }
+            if (downPressed && donkey.y < canvas.height - donkey.height) {
+                donkey.y += donkey.speed;
             }
         }
 
