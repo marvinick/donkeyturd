@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dodging Donkey Turd</title>
+    <style>
+        #gameCanvas {
+            border: 1px solid black;
+            background: #87CEEB;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Donkey properties
+        const donkey = {
+            x: 175,
+            y: 500,
+            width: 50,
+            height: 50,
+            speed: 5
+        };
+
+        // Turd properties
+        let turds = [];
+        const turdWidth = 30;
+        const turdHeight = 30;
+        const turdSpeed = 3;
+
+        let score = 0;
+        let gameOver = false;
+
+        // Controls
+        let leftPressed = false;
+        let rightPressed = false;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') leftPressed = true;
+            if (e.key === 'ArrowRight') rightPressed = true;
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft') leftPressed = false;
+            if (e.key === 'ArrowRight') rightPressed = false;
+        });
+
+        // Create new turd
+        function createTurd() {
+            const x = Math.random() * (canvas.width - turdWidth);
+            turds.push({ x: x, y: -turdHeight });
+        }
+
+        // Draw donkey (simple rectangle representation)
+        function drawDonkey() {
+            ctx.fillStyle = 'gray';
+            ctx.fillRect(donkey.x, donkey.y, donkey.width, donkey.height);
+            // Add ears
+            ctx.fillStyle = 'gray';
+            ctx.fillRect(donkey.x + 5, donkey.y - 10, 10, 10);
+            ctx.fillRect(donkey.x + 35, donkey.y - 10, 10, 10);
+        }
+
+        // Draw turds
+        function drawTurds() {
+            ctx.fillStyle = 'brown';
+            turds.forEach(turd => {
+                ctx.fillRect(turd.x, turd.y, turdWidth, turdHeight);
+            });
+        }
+
+        // Move donkey
+        function moveDonkey() {
+            if (leftPressed && donkey.x > 0) {
+                donkey.x -= donkey.speed;
+            }
+            if (rightPressed && donkey.x < canvas.width - donkey.width) {
+                donkey.x += donkey.speed;
+            }
+        }
+
+        // Update turds
+        function updateTurds() {
+            for (let i = turds.length - 1; i >= 0; i--) {
+                turds[i].y += turdSpeed;
+
+                // Check collision
+                if (turds[i].y + turdHeight > donkey.y &&
+                    turds[i].x < donkey.x + donkey.width &&
+                    turds[i].x + turdWidth > donkey.x &&
+                    turds[i].y < donkey.y + donkey.height) {
+                    gameOver = true;
+                }
+
+                // Remove turds that go off screen
+                if (turds[i].y > canvas.height) {
+                    turds.splice(i, 1);
+                    score++;
+                }
+            }
+        }
+
+        // Main game loop
+        function gameLoop() {
+            if (gameOver) {
+                ctx.fillStyle = 'black';
+                ctx.font = '30px Arial';
+                ctx.fillText('Game Over!', 120, 300);
+                ctx.fillText(`Score: ${score}`, 150, 350);
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            moveDonkey();
+            drawDonkey();
+            updateTurds();
+            drawTurds();
+
+            // Draw score
+            ctx.fillStyle = 'black';
+            ctx.font = '20px Arial';
+            ctx.fillText(`Score: ${score}`, 10, 30);
+
+            // Randomly spawn turds
+            if (Math.random() < 0.02) {
+                createTurd();
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start the game
+        gameLoop();
+    </script>
+</body>
+</html>
