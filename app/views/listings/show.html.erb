@@ -1,0 +1,246 @@
+<div class="bg-white">
+  <!-- Hero Section with Image Placeholder -->
+  <section class="relative">
+    <div class="aspect-video bg-gradient-to-br from-gray-200 to-gray-400 relative overflow-hidden">
+      <!-- Main image placeholder -->
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="text-center text-gray-600">
+          <svg class="w-20 h-20 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <p class="text-lg font-medium"><%= @listing.view_type_display %> View</p>
+          <p class="text-sm text-gray-500">Images coming soon</p>
+        </div>
+      </div>
+      
+      <!-- Platform badge -->
+      <div class="absolute top-6 right-6">
+        <span class="bg-white bg-opacity-95 text-gray-800 text-sm font-medium px-3 py-2 rounded-full shadow-lg">
+          <%= @listing.platform_name %>
+        </span>
+      </div>
+      
+      <!-- Verified badge -->
+      <% if @listing.verified? %>
+        <div class="absolute top-6 left-6">
+          <span class="bg-green-500 text-white text-sm font-medium px-3 py-2 rounded-full flex items-center shadow-lg">
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+            Verified
+          </span>
+        </div>
+      <% end %>
+      
+      <!-- Back button -->
+      <div class="absolute top-6 left-6 <%= @listing.verified? ? 'top-20' : '' %>">
+        <%= link_to listings_path, class: "bg-white bg-opacity-95 text-gray-800 p-2 rounded-full shadow-lg hover:bg-opacity-100 transition-all" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="lg:grid lg:grid-cols-3 lg:gap-8">
+      <!-- Left Column - Main Content -->
+      <div class="lg:col-span-2">
+        <!-- Header -->
+        <div class="mb-6">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= @listing.title %></h1>
+              <div class="flex items-center text-gray-600 mb-2">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span class="text-lg"><%= @listing.location %></span>
+              </div>
+              
+              <div class="flex items-center space-x-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                  <%= @listing.view_type_display %>
+                </span>
+                <% if @listing.price_range.present? %>
+                  <span class="text-lg font-semibold text-gray-900">
+                    <%= @listing.price_range %>/night
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Host Info -->
+          <div class="flex items-center text-sm text-gray-600">
+            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+              <span class="text-gray-600 font-medium"><%= @listing.user.name.first %></span>
+            </div>
+            <span>Listed by <span class="font-medium"><%= @listing.user.name %></span> • <%= time_ago_in_words(@listing.created_at) %> ago</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-8">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">About this view</h2>
+          <div class="prose prose-gray max-w-none">
+            <p class="text-gray-700 leading-relaxed"><%= simple_format(@listing.description) %></p>
+          </div>
+        </div>
+
+        <!-- View Details -->
+        <div class="mb-8 bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">View Details</h3>
+          <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">View Type</dt>
+              <dd class="text-sm text-gray-900"><%= @listing.view_type_display %></dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Location</dt>
+              <dd class="text-sm text-gray-900"><%= @listing.location %></dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Platform</dt>
+              <dd class="text-sm text-gray-900"><%= @listing.platform_name %></dd>
+            </div>
+            <% if @listing.price_range.present? %>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Price Range</dt>
+                <dd class="text-sm text-gray-900"><%= @listing.price_range %> per night</dd>
+              </div>
+            <% end %>
+            <% if @listing.verified? %>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Status</dt>
+                <dd class="text-sm text-green-600 font-medium">✓ Verified</dd>
+              </div>
+            <% end %>
+          </dl>
+        </div>
+      </div>
+
+      <!-- Right Column - Booking Card -->
+      <div class="lg:col-span-1">
+        <div class="sticky top-8">
+          <!-- Booking Card -->
+          <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6">
+            <div class="text-center mb-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">Ready to experience this view?</h3>
+              <p class="text-sm text-gray-600">Book directly through <%= @listing.platform_name %></p>
+            </div>
+            
+            <div class="space-y-4">
+              <%= link_to @listing.external_url, 
+                          target: "_blank", 
+                          rel: "noopener noreferrer",
+                          class: "w-full bg-gray-900 text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors font-medium text-center block" do %>
+                <span class="flex items-center justify-center">
+                  Book on <%= @listing.platform_name %>
+                  <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                  </svg>
+                </span>
+              <% end %>
+              
+              <p class="text-xs text-gray-500 text-center">
+                You'll be redirected to <%= @listing.platform_name %> to complete your booking
+              </p>
+            </div>
+            
+            <!-- Contact Host (if signed in and not owner) -->
+            <% if user_signed_in? && current_user != @listing.user %>
+              <div class="mt-6 pt-6 border-t border-gray-200">
+                <button class="w-full border border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                  Contact <%= @listing.user.name.split.first %>
+                </button>
+              </div>
+            <% end %>
+            
+            <!-- Edit/Delete (if owner) -->
+            <% if user_signed_in? && current_user == @listing.user %>
+              <div class="mt-6 pt-6 border-t border-gray-200 space-y-2">
+                <%= link_to "Edit Listing", edit_listing_path(@listing),
+                            class: "w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors font-medium text-center block" %>
+                <%= link_to "Delete Listing", @listing, method: :delete,
+                            data: { confirm: "Are you sure? This cannot be undone." },
+                            class: "w-full border border-red-300 text-red-700 py-2 px-4 rounded-lg hover:bg-red-50 transition-colors font-medium text-center block" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Listings -->
+  <% if @related_listings.any? %>
+    <section class="bg-gray-50 py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">Similar <%= @listing.view_type_display %> Views</h2>
+          <p class="text-gray-600">More places with amazing <%= @listing.view_type_display.downcase %> views</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <% @related_listings.each do |listing| %>
+            <div class="bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow">
+              <%= link_to listing, class: "block" do %>
+                <div class="aspect-video bg-gradient-to-br from-gray-200 to-gray-300 rounded-t-lg overflow-hidden relative">
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="text-center text-gray-600">
+                      <svg class="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                      <p class="text-xs"><%= listing.view_type_display %></p>
+                    </div>
+                  </div>
+                  
+                  <div class="absolute top-2 right-2">
+                    <span class="bg-white bg-opacity-90 text-gray-800 text-xs font-medium px-2 py-1 rounded-full">
+                      <%= listing.platform_name %>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="p-4">
+                  <h3 class="font-semibold text-gray-900 mb-2 line-clamp-2">
+                    <%= listing.title %>
+                  </h3>
+                  
+                  <p class="text-sm text-gray-600 mb-2">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <%= listing.location %>
+                  </p>
+                  
+                  <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      <%= listing.view_type_display %>
+                    </span>
+                    
+                    <% if listing.price_range.present? %>
+                      <span class="text-sm font-semibold text-gray-900">
+                        <%= listing.price_range %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        
+        <div class="text-center mt-8">
+          <%= link_to "View All #{@listing.view_type_display} Views", listings_path(view_type: @listing.view_type),
+                      class: "bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium" %>
+        </div>
+      </div>
+    </section>
+  <% end %>
+</div>

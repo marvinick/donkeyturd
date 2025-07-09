@@ -12,16 +12,18 @@
       
       <!-- Search Bar (Mobile/Tablet) -->
       <div class="md:hidden max-w-lg mx-auto mb-8">
-        <div class="relative">
-          <input type="text" 
-                 placeholder="Search for places with amazing views..." 
-                 class="w-full px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-gray-900 focus:border-transparent">
-          <button class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white p-2 rounded-full hover:bg-gray-800">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-          </button>
-        </div>
+        <%= form_with url: search_listings_path, method: :get, local: true do |f| %>
+          <div class="relative">
+            <%= f.text_field :q, 
+                             placeholder: "Search for places with amazing views...",
+                             class: "w-full px-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
+            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white p-2 rounded-full hover:bg-gray-800">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </button>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
@@ -34,7 +36,7 @@
     
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
       <!-- Mountain Views -->
-      <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
+      <%= link_to listings_path(view_type: 'mountain'), class: "bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group" do %>
         <div class="aspect-square bg-gray-200 rounded-t-lg overflow-hidden">
           <div class="w-full h-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
             <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,10 +48,10 @@
           <h3 class="font-semibold text-gray-900 group-hover:text-gray-700">Mountain Views</h3>
           <p class="text-sm text-gray-600">Majestic peaks and alpine scenery</p>
         </div>
-      </div>
+      <% end %>
 
       <!-- Ocean Views -->
-      <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
+      <%= link_to listings_path(view_type: 'ocean'), class: "bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group" do %>
         <div class="aspect-square bg-gray-200 rounded-t-lg overflow-hidden">
           <div class="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
             <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,10 +63,10 @@
           <h3 class="font-semibold text-gray-900 group-hover:text-gray-700">Ocean Views</h3>
           <p class="text-sm text-gray-600">Endless horizons and coastal beauty</p>
         </div>
-      </div>
+      <% end %>
 
       <!-- City Skylines -->
-      <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
+      <%= link_to listings_path(view_type: 'city'), class: "bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group" do %>
         <div class="aspect-square bg-gray-200 rounded-t-lg overflow-hidden">
           <div class="w-full h-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center">
             <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,10 +78,10 @@
           <h3 class="font-semibold text-gray-900 group-hover:text-gray-700">City Skylines</h3>
           <p class="text-sm text-gray-600">Urban vistas and architectural wonders</p>
         </div>
-      </div>
+      <% end %>
 
       <!-- Lake Views -->
-      <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
+      <%= link_to listings_path(view_type: 'lake'), class: "bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group" do %>
         <div class="aspect-square bg-gray-200 rounded-t-lg overflow-hidden">
           <div class="w-full h-full bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center">
             <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +93,7 @@
           <h3 class="font-semibold text-gray-900 group-hover:text-gray-700">Lake Views</h3>
           <p class="text-sm text-gray-600">Serene waters and peaceful reflections</p>
         </div>
-      </div>
+      <% end %>
     </div>
   </div>
 </section>
@@ -123,9 +125,8 @@
     </div>
     
     <div class="text-center mt-8">
-      <button class="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium">
-        View all listings
-      </button>
+      <%= link_to "View all listings", listings_path,
+                  class: "bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium" %>
     </div>
   </div>
 </section>

@@ -10,9 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_08_223730) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_09_004651) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "listings", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description", null: false
+    t.string "external_url", null: false
+    t.string "platform", null: false
+    t.string "location", null: false
+    t.string "view_type", null: false
+    t.string "price_range"
+    t.bigint "user_id", null: false
+    t.boolean "active", default: true
+    t.datetime "verified_at"
+    t.text "admin_notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active", "view_type"], name: "index_listings_on_active_and_view_type"
+    t.index ["created_at"], name: "index_listings_on_created_at"
+    t.index ["external_url"], name: "index_listings_on_external_url", unique: true
+    t.index ["location"], name: "index_listings_on_location"
+    t.index ["platform"], name: "index_listings_on_platform"
+    t.index ["user_id"], name: "index_listings_on_user_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -28,4 +50,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_223730) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "listings", "users"
 end

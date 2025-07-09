@@ -5,6 +5,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable, :omniauthable,
          omniauth_providers: [:google_oauth2]
 
+  has_many :listings, dependent: :destroy
+
   validates :name, presence: true
 
   def self.from_omniauth(auth)
@@ -15,5 +17,9 @@ class User < ApplicationRecord
       user.uid = auth.uid
       user.password = Devise.friendly_token[0, 20]
     end
+  end
+
+  def full_name
+    name
   end
 end
