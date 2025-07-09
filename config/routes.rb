@@ -12,6 +12,22 @@ Rails.application.routes.draw do
       get :map
     end
   end
+  
+  # City SEO routes
+  resources :cities, only: [:index, :show] do
+    # View type specific pages: /cities/banff-alberta/mountain-views
+    member do
+      get ':view_type', to: 'cities#view_type', as: 'view_type',
+          constraints: { view_type: /mountain|ocean|lake|city|desert|forest|river|canyon|valley|beach/ }
+    end
+  end
+  
+  # SEO-friendly view routes
+  get "/mountain-views", to: 'listings#index', defaults: { view_type: 'mountain' }, as: "mountain_views"
+  get "/ocean-views", to: 'listings#index', defaults: { view_type: 'ocean' }, as: "ocean_views"
+  get "/lake-views", to: 'listings#index', defaults: { view_type: 'lake' }, as: "lake_views"
+  get "/city-views", to: 'listings#index', defaults: { view_type: 'city' }, as: "city_views"
+  
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -23,5 +39,5 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root "home#index"
+  root "listings#index"
 end

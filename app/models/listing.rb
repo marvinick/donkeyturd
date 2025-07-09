@@ -1,5 +1,6 @@
 class Listing < ApplicationRecord
   belongs_to :user
+  belongs_to :city, optional: true
   has_many_attached :images
 
   # Constants for validation
@@ -38,7 +39,10 @@ class Listing < ApplicationRecord
   }
 
   # Callbacks
-  before_save :extract_platform_from_url, if: :external_url_changed?
+  after_create :update_city_listings_count
+  after_destroy :update_city_listings_count
+  before_save :extract_platform_from_url
+  after_update :update_city_listings_count, if: :saved_change_to_city_id?
 
   def verified?
     verified_at.present?
@@ -177,5 +181,18 @@ class Listing < ApplicationRecord
     c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
     
     (earth_radius * c).round(2)
+  end
+  
+  private
+  
+  def update_city_listings_count
+    # Update old city count if city changed
+    if saved_change_to_city_id? && saved_change_to_city_id?[0].present?
+      old_city = City.find_by(id: saved_change_to_city_id?[0])
+      old_city&.update_column(:listings_count, old_city.listings.active.count)
+    end
+    
+    # Update current city count
+    city&.update_column(:listings_count, city.listings.active.count)
   end
 end
