@@ -85,6 +85,53 @@ class ListingsController < ApplicationController
     render :index
   end
 
+  # External API import actions
+  def search_external
+    @query = params[:q]
+    @results = {}
+    
+    if @query.present?
+      @results = ApiServiceFactory.search_all_sources(@query, limit: 5)
+    end
+    
+    render :search_external
+  end
+  
+  def import_external
+    source = params[:source]
+    external_id = params[:external_id]
+    
+    unless ApiServiceFactory.available_sources.include?(source)
+      redirect_to search_external_listings_path, alert: 'Invalid API source'
+      return
+    end
+    
+    begin
+      api_key = get_api_key_for_source(source)
+      unless api_key
+        redirect_to search_external_listings_path, alert: "#{source.humanize} API key not configured"
+        return
+      end
+      
+      service = ApiServiceFactory.create(source, api_key: api_key)
+      listing = service.import_with_photos(external_id, current_user)
+      
+      if listing
+        redirect_to listing, notice: "Successfully imported listing from #{source.humanize}! Photos are being imported in the background."
+      else
+        redirect_to search_external_listings_path, alert: 'Failed to import listing'
+      end
+      
+    rescue => e
+      Rails.logger.error "Import error: #{e.message}"
+      redirect_to search_external_listings_path, alert: 'Error importing listing. Please try again.'
+    end
+  end
+  
+  def api_status
+    # Simple status page - just renders the view
+  end
+
   private
 
   def set_listing
@@ -100,5 +147,16 @@ class ListingsController < ApplicationController
   def listing_params
     params.require(:listing).permit(:title, :description, :external_url, :platform, 
                                    :location, :view_type, :price_range, images: [], delete_image_ids: [])
+  end
+
+  def get_api_key_for_source(source)
+    case source
+    when 'tripadvisor'
+      Rails.application.credentials.tripadvisor&.api_key
+    when 'google_places'
+      Rails.application.credentials.google&.places_api_key
+    when 'foursquare'
+      Rails.application.credentials.foursquare&.api_key
+    end
   end
 end

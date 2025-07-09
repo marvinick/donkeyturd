@@ -1,0 +1,107 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">External API Integration Status</h1>
+      <p class="mt-2 text-gray-600">Manage and monitor your external API integrations</p>
+    </div>
+
+    <!-- API Status Cards -->
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+      <!-- TripAdvisor -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">TripAdvisor</h3>
+          <%= api_status_badge('tripadvisor') %>
+        </div>
+        <p class="text-sm text-gray-600 mb-4">Import attractions and tourist destinations from TripAdvisor's database.</p>
+        <div class="text-xs text-gray-500">
+          Credential: <code>tripadvisor.api_key</code>
+        </div>
+      </div>
+
+      <!-- Google Places -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Google Places</h3>
+          <%= api_status_badge('google_places') %>
+        </div>
+        <p class="text-sm text-gray-600 mb-4">Import places and locations from Google's extensive Places database.</p>
+        <div class="text-xs text-gray-500">
+          Credential: <code>google.places_api_key</code>
+        </div>
+      </div>
+
+      <!-- Foursquare -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Foursquare</h3>
+          <%= api_status_badge('foursquare') %>
+        </div>
+        <p class="text-sm text-gray-600 mb-4">Import venues and places from Foursquare's location platform.</p>
+        <div class="text-xs text-gray-500">
+          Credential: <code>foursquare.api_key</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- Configuration Instructions -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Configuration</h2>
+      
+      <div class="prose prose-sm max-w-none">
+        <p class="text-gray-600 mb-4">To configure API credentials, use Rails encrypted credentials:</p>
+        
+        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+          <code class="text-sm">
+            EDITOR="code --wait" rails credentials:edit
+          </code>
+        </div>
+        
+        <p class="text-gray-600 mb-4">Add your API keys in this format:</p>
+        
+        <div class="bg-gray-50 rounded-lg p-4">
+          <pre class="text-sm"><code>tripadvisor:
+  api_key: your_tripadvisor_api_key
+
+google:
+  places_api_key: your_google_places_api_key
+
+foursquare:
+  api_key: your_foursquare_api_key</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Statistics -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Import Statistics</h2>
+      
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <% 
+          stats = {
+            'Manual' => Listing.where(import_status: 'manual').count,
+            'Imported' => Listing.where(import_status: 'imported').count,
+            'TripAdvisor' => Listing.where(external_source: 'tripadvisor').count,
+            'Google Places' => Listing.where(external_source: 'google_places').count
+          }
+        %>
+        
+        <% stats.each do |label, count| %>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-gray-900"><%= count %></div>
+            <div class="text-sm text-gray-600"><%= label %></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="mt-8 text-center">
+      <%= link_to "Search External APIs", search_external_listings_path, 
+          class: "bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 font-medium mr-4" %>
+      <%= link_to "Back to Listings", listings_path, 
+          class: "text-indigo-600 hover:text-indigo-500 font-medium" %>
+    </div>
+  </div>
+</div>

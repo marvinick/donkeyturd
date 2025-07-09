@@ -99,5 +99,20 @@ class ApiIntegrationService
     end
   end
 
+  # Enhanced import method with photo handling
+  def import_with_photos(external_id, user)
+    listing = import_to_listing(external_id, user)
+    return listing unless listing&.persisted?
+    
+    # Queue photo import job
+    details = fetch_location_details(external_id)
+    if details && details[:photos].present?
+      ImportPhotosJob.perform_later(listing.id, details[:photos])
+      Rails.logger.info "Queued photo import job for listing #{listing.id}"
+    end
+    
+    listing
+  end
+
   class ApiError < StandardError; end
 end

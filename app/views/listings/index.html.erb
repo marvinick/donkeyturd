@@ -21,6 +21,16 @@
           </button>
         </div>
       <% end %>
+      
+      <!-- Quick Actions -->
+      <% if user_signed_in? %>
+        <div class="flex justify-center gap-4 mt-6">
+          <%= link_to "Add Your Listing", new_listing_path, 
+              class: "bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 font-medium" %>
+          <%= link_to "Import from APIs", search_external_listings_path, 
+              class: "bg-white text-gray-900 px-6 py-3 rounded-lg border border-gray-300 hover:border-gray-400 font-medium" %>
+        </div>
+      <% end %>
     </div>
   </section>
 

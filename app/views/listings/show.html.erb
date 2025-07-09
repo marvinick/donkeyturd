@@ -44,10 +44,24 @@
         <% end %>
 
         <!-- Platform badge -->
-        <div class="absolute top-6 right-6">
-          <span class="bg-white bg-opacity-95 text-gray-800 text-sm font-medium px-3 py-2 rounded-full shadow-lg">
-            <%= @listing.platform_name %>
-          </span>
+        <div class="absolute top-6 right-6 space-y-2">
+          <div>
+            <span class="bg-white bg-opacity-95 text-gray-800 text-sm font-medium px-3 py-2 rounded-full shadow-lg">
+              <%= @listing.platform_name %>
+            </span>
+          </div>
+          
+          <!-- Import status badge -->
+          <% if @listing.external_source.present? %>
+            <div>
+              <span class="bg-blue-500 bg-opacity-95 text-white text-xs font-medium px-3 py-2 rounded-full shadow-lg flex items-center">
+                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 12l2 2 4-4"></path>
+                </svg>
+                Imported from <%= @listing.external_source.humanize %>
+              </span>
+            </div>
+          <% end %>
         </div>
         
         <!-- Verified badge -->

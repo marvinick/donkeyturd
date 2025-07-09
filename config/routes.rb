@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   resources :listings do
     collection do
       get :search
+      get :search_external
+      post :import_external
+      get :api_status
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
