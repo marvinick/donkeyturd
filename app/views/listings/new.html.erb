@@ -5,7 +5,7 @@
       <p class="text-gray-600">Help travelers discover places with breathtaking views</p>
     </div>
 
-    <%= form_with model: @listing, local: true, class: "space-y-6" do |f| %>
+    <%= form_with model: @listing, local: true, multipart: true, class: "space-y-6" do |f| %>
       <% if @listing.errors.any? %>
         <div class="bg-red-50 border border-red-200 rounded-lg p-4">
           <h3 class="text-red-800 font-medium mb-2">Please fix the following errors:</h3>
@@ -87,6 +87,9 @@
                           class: "w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent" %>
           <p class="text-sm text-gray-500 mt-1">Minimum 50 characters, focus on the view and experience</p>
         </div>
+
+        <!-- Image Upload -->
+        <%= render 'image_upload', f: f, listing: @listing %>
       </div>
 
       <!-- Submit Button -->

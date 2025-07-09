@@ -1,0 +1,331 @@
+<div class="space-y-4">
+  <%= f.label :images, "Photos", class: "block text-sm font-medium text-gray-700 mb-2" %>
+  
+  <!-- Image Upload Area -->
+  <div id="image-upload-area" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer">
+    <input type="file" id="image-input" name="listing[images][]" multiple accept="image/*" class="hidden">
+    
+    <div id="upload-prompt" class="space-y-4">
+      <div class="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+        </svg>
+      </div>
+      <div>
+        <p class="text-lg font-medium text-gray-900">Add photos of your view</p>
+        <p class="text-sm text-gray-500">Drag and drop photos here, or click to browse</p>
+        <p class="text-xs text-gray-400 mt-2">Upload up to 5 images (JPEG, PNG, or WebP, max 10MB each)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Previews -->
+  <div id="image-previews" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <% if listing.images.attached? %>
+      <% listing.images.each_with_index do |image, index| %>
+        <div class="existing-image relative group" data-image-id="<%= image.id %>">
+          <%= image_tag image, class: "w-full h-32 object-cover rounded-lg" %>
+          <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-lg flex items-center justify-center">
+            <button type="button" class="delete-existing-image opacity-0 group-hover:opacity-100 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all" data-image-id="<%= image.id %>">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+          <% if index == 0 %>
+            <div class="absolute top-2 left-2 bg-white bg-opacity-90 px-2 py-1 rounded text-xs font-medium text-gray-800">
+              Main Photo
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- Hidden fields for images to delete -->
+  <div id="delete-images-container"></div>
+
+  <p class="text-sm text-gray-500">
+    The first photo will be used as the main image for your listing.
+    <% if listing.images.attached? %>
+      You currently have <%= pluralize(listing.images.count, 'photo') %>.
+    <% end %>
+  </p>
+</div>
+
+<style>
+  .image-preview {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+  
+  .delete-btn:hover {
+    background: rgba(220, 38, 38, 0.8);
+  }
+  
+  .drag-over {
+    border-color: #374151 !important;
+    background-color: #f9fafb;
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const uploadArea = document.getElementById('image-upload-area');
+  const fileInput = document.getElementById('image-input');
+  const previewsContainer = document.getElementById('image-previews');
+  const uploadPrompt = document.getElementById('upload-prompt');
+  const deleteContainer = document.getElementById('delete-images-container');
+  
+  if (!uploadArea) return; // Exit if elements don't exist
+  
+  let selectedFiles = [];
+  let deletedImageIds = [];
+  const maxFiles = 5;
+  let existingImages = document.querySelectorAll('.existing-image').length;
+
+  // Prevent default drag behaviors for the entire document
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    document.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // Highlight drop area when item is dragged over it
+  ['dragenter', 'dragover'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, highlight, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, unhighlight, false);
+  });
+
+  function highlight(e) {
+    uploadArea.classList.add('drag-over');
+  }
+
+  function unhighlight(e) {
+    uploadArea.classList.remove('drag-over');
+  }
+
+  // Handle dropped files
+  uploadArea.addEventListener('drop', handleDrop, false);
+
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    handleFiles(files);
+  }
+
+  // Click to upload
+  uploadArea.addEventListener('click', function() {
+    const remainingSlots = maxFiles - existingImages + deletedImageIds.length - selectedFiles.length;
+    if (remainingSlots > 0) {
+      fileInput.click();
+    }
+  });
+
+  // File input change
+  fileInput.addEventListener('change', function(e) {
+    if (e.target.files.length > 0) {
+      handleFiles(e.target.files);
+      // Clear the input so the same file can be selected again if needed
+      e.target.value = '';
+    }
+  });
+
+  // Handle existing image deletion
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.delete-existing-image')) {
+      const button = e.target.closest('.delete-existing-image');
+      const imageId = button.dataset.imageId;
+      const imageElement = button.closest('.existing-image');
+      
+      // Add to deletion list
+      deletedImageIds.push(imageId);
+      
+      // Create hidden input for deletion
+      const hiddenInput = document.createElement('input');
+      hiddenInput.type = 'hidden';
+      hiddenInput.name = 'listing[delete_image_ids][]';
+      hiddenInput.value = imageId;
+      deleteContainer.appendChild(hiddenInput);
+      
+      // Remove from display
+      imageElement.remove();
+      existingImages--;
+      
+      updateUploadPrompt();
+    }
+    
+    if (e.target.closest('.delete-new-image')) {
+      const button = e.target.closest('.delete-new-image');
+      const index = parseInt(button.dataset.index);
+      removePreview(index);
+    }
+  });
+
+  function handleFiles(files) {
+    console.log('Handling', files.length, 'files');
+    const currentTotal = existingImages - deletedImageIds.length + selectedFiles.length;
+    const availableSlots = maxFiles - currentTotal;
+    console.log('Available slots:', availableSlots, 'Current total:', currentTotal);
+    
+    let filesAdded = 0;
+    
+    for (let i = 0; i < Math.min(files.length, availableSlots); i++) {
+      const file = files[i];
+      console.log('Processing file:', file.name, file.type, file.size);
+      
+      // Check if file is already selected (by name and size)
+      const isDuplicate = selectedFiles.some(existingFile => 
+        existingFile.name === file.name && existingFile.size === file.size
+      );
+      
+      if (isDuplicate) {
+        console.log('Skipping duplicate file:', file.name);
+        continue;
+      }
+      
+      // Validate file type
+      if (!file.type.match(/image\/(jpeg|jpg|png|webp)/)) {
+        alert('Please select only JPEG, PNG, or WebP images.');
+        continue;
+      }
+      
+      // Validate file size (10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('Each image must be less than 10MB.');
+        continue;
+      }
+      
+      selectedFiles.push(file);
+      createPreview(file, selectedFiles.length - 1);
+      filesAdded++;
+    }
+    
+    if (filesAdded > 0) {
+      updateFileInput();
+      updateUploadPrompt();
+    }
+    
+    if (files.length > availableSlots) {
+      alert(`You can only upload up to ${maxFiles} images total. ${files.length - availableSlots} file(s) were not added.`);
+    }
+  }
+
+  function createPreview(file, index) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const previewDiv = document.createElement('div');
+      previewDiv.className = 'image-preview relative group';
+      
+      const isMainPhoto = index === 0 && existingImages === 0;
+      const mainPhotoLabel = isMainPhoto ? 
+        '<div class="absolute top-2 left-2 bg-white bg-opacity-90 px-2 py-1 rounded text-xs font-medium text-gray-800">Main Photo</div>' : '';
+      
+      previewDiv.innerHTML = `
+        <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg" alt="Preview">
+        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-lg flex items-center justify-center">
+          <button type="button" class="delete-new-image opacity-0 group-hover:opacity-100 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all" data-index="${index}">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </button>
+        </div>
+        ${mainPhotoLabel}
+      `;
+      previewsContainer.appendChild(previewDiv);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removePreview(index) {
+    console.log('Removing preview at index:', index, 'Total files before:', selectedFiles.length);
+    selectedFiles.splice(index, 1);
+    
+    // Rebuild all previews with correct indices
+    const previews = previewsContainer.querySelectorAll('.image-preview');
+    previews.forEach(preview => preview.remove());
+    
+    // Recreate all previews with updated indices
+    selectedFiles.forEach((file, i) => createPreview(file, i));
+    
+    updateFileInput();
+    updateUploadPrompt();
+    console.log('Total files after removal:', selectedFiles.length);
+  }
+
+  function updateFileInput() {
+    // Create a new DataTransfer to hold our files
+    const dt = new DataTransfer();
+    selectedFiles.forEach(file => dt.items.add(file));
+    fileInput.files = dt.files;
+    console.log('Updated file input with', selectedFiles.length, 'files');
+  }
+
+  function updateUploadPrompt() {
+    const currentTotal = existingImages - deletedImageIds.length + selectedFiles.length;
+    const remaining = maxFiles - currentTotal;
+    
+    if (remaining <= 0) {
+      uploadPrompt.innerHTML = `
+        <div class="text-gray-500">
+          <p class="font-medium">Maximum images reached (${maxFiles})</p>
+          <p class="text-sm">Remove an image to upload a new one</p>
+        </div>
+      `;
+      uploadArea.style.cursor = 'not-allowed';
+    } else {
+      uploadPrompt.innerHTML = `
+        <div class="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          </svg>
+        </div>
+        <div>
+          <p class="text-lg font-medium text-gray-900">Add photos of your view</p>
+          <p class="text-sm text-gray-500">Drag and drop photos here, or click to browse</p>
+          <p class="text-xs text-gray-400 mt-2">Upload up to ${remaining} more image${remaining !== 1 ? 's' : ''} (JPEG, PNG, or WebP, max 10MB each)</p>
+        </div>
+      `;
+      uploadArea.style.cursor = 'pointer';
+    }
+  }
+  
+  // Initial update
+  updateUploadPrompt();
+  
+  // Debug form submission
+  const form = uploadArea.closest('form');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      console.log('Form submitting with files:', fileInput.files.length);
+      for (let i = 0; i < fileInput.files.length; i++) {
+        console.log('File', i, ':', fileInput.files[i].name);
+      }
+    });
+  }
+});
+</script>

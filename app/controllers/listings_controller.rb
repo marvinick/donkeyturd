@@ -34,6 +34,9 @@ class ListingsController < ApplicationController
   def create
     @listing = current_user.listings.build(listing_params)
     
+    # Debug logging
+    Rails.logger.info "Images received: #{params[:listing][:images]&.length || 0}"
+    
     if @listing.save
       redirect_to @listing, notice: 'Your listing has been submitted for review. Thank you!'
     else
@@ -46,6 +49,14 @@ class ListingsController < ApplicationController
 
   def update
     if @listing.update(listing_params)
+      # Handle image deletion
+      if params[:listing][:delete_image_ids].present?
+        params[:listing][:delete_image_ids].each do |image_id|
+          image = @listing.images.find(image_id)
+          image.purge if image
+        end
+      end
+      
       redirect_to @listing, notice: 'Listing updated successfully.'
     else
       render :edit, status: :unprocessable_entity
@@ -88,6 +99,6 @@ class ListingsController < ApplicationController
 
   def listing_params
     params.require(:listing).permit(:title, :description, :external_url, :platform, 
-                                   :location, :view_type, :price_range)
+                                   :location, :view_type, :price_range, images: [], delete_image_ids: [])
   end
 end

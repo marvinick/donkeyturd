@@ -1,5 +1,6 @@
 class Listing < ApplicationRecord
   belongs_to :user
+  has_many_attached :images
 
   # Constants for validation
   PLATFORMS = %w[airbnb booking_com vrbo hotels_com expedia kayak other].freeze
@@ -14,6 +15,7 @@ class Listing < ApplicationRecord
   validates :location, presence: true, length: { minimum: 3, maximum: 100 }
   validates :view_type, presence: true, inclusion: { in: VIEW_TYPES }
   validates :price_range, inclusion: { in: PRICE_RANGES }, allow_blank: true
+  validate :acceptable_images
 
   # URL validation
   validate :valid_external_url
@@ -53,7 +55,33 @@ class Listing < ApplicationRecord
     description.truncate(150)
   end
 
+  def main_image
+    images.attached? ? images.first : nil
+  end
+
+  def has_images?
+    images.attached?
+  end
+
   private
+
+  def acceptable_images
+    return unless images.attached?
+
+    if images.count > 5
+      errors.add(:images, 'You can upload a maximum of 5 images')
+    end
+
+    images.each do |image|
+      unless image.content_type.in?(%w[image/jpeg image/jpg image/png image/webp])
+        errors.add(:images, 'Images must be JPEG, PNG, or WebP format')
+      end
+
+      if image.byte_size > 10.megabytes
+        errors.add(:images, 'Each image must be less than 10MB')
+      end
+    end
+  end
 
   def valid_external_url
     return unless external_url.present?
