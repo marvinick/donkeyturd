@@ -18,6 +18,15 @@ class ListingsController < ApplicationController
     @view_types = Listing::VIEW_TYPES
     @platforms = Listing::PLATFORMS
     @total_count = Listing.active.count
+    
+    # Prepare map data (get all listings for map, not just paginated ones)
+    @all_listings_for_map = Listing.active.with_coordinates.includes(:user)
+    @all_listings_for_map = @all_listings_for_map.by_view_type(params[:view_type]) if params[:view_type].present?
+    @all_listings_for_map = @all_listings_for_map.by_platform(params[:platform]) if params[:platform].present?
+    
+    if params[:location].present?
+      @all_listings_for_map = @all_listings_for_map.where("location ILIKE ?", "%#{params[:location]}%")
+    end
   end
 
   def show
@@ -131,6 +140,32 @@ class ListingsController < ApplicationController
   def api_status
     # Simple status page - just renders the view
   end
+  
+  def map
+    @listings = Listing.active.with_coordinates.includes(:user)
+    
+    # Filter by params if provided
+    @listings = @listings.by_view_type(params[:view_type]) if params[:view_type].present?
+    @listings = @listings.by_platform(params[:platform]) if params[:platform].present?
+    
+    if params[:location].present?
+      @listings = @listings.where("location ILIKE ?", "%#{params[:location]}%")
+    end
+    
+    # Prepare data for JavaScript
+    @listings_json = @listings.map do |listing|
+      {
+        id: listing.id,
+        title: listing.title,
+        latitude: listing.latitude.to_f,
+        longitude: listing.longitude.to_f,
+        address: listing.location,
+        view_type: listing.view_type.humanize,
+        platform: listing.platform_name,
+        verified: listing.verified?
+      }
+    end
+  end
 
   private
 
@@ -146,7 +181,8 @@ class ListingsController < ApplicationController
 
   def listing_params
     params.require(:listing).permit(:title, :description, :external_url, :platform, 
-                                   :location, :view_type, :price_range, images: [], delete_image_ids: [])
+                                   :location, :view_type, :price_range, :latitude, :longitude,
+                                   images: [], delete_image_ids: [])
   end
 
   def get_api_key_for_source(source)

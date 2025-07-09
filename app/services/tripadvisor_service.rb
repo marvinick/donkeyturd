@@ -68,13 +68,15 @@ class TripadvisorService < ApiIntegrationService
     
     listing = Listing.new(
       user: user,
-      name: details[:name],
+      title: details[:name],
       description: details[:description],
-      address: details[:address],
+      location: details[:address],
       latitude: details[:latitude],
       longitude: details[:longitude],
       phone_number: details[:phone],
-      booking_url: details[:website],
+      external_url: details[:website],
+      platform: 'other', # TripAdvisor isn't a booking platform directly
+      view_type: 'other', # Will need to be set manually or inferred
       external_id: external_id,
       external_source: 'tripadvisor',
       external_data: details[:raw_data].to_json,

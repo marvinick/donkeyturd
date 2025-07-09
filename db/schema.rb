@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_09_014612) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_09_110447) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -60,11 +60,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_014612) do
     t.string "external_source"
     t.text "external_data"
     t.string "import_status", default: "manual"
+    t.decimal "latitude", precision: 10, scale: 6
+    t.decimal "longitude", precision: 10, scale: 6
     t.index ["active", "view_type"], name: "index_listings_on_active_and_view_type"
     t.index ["created_at"], name: "index_listings_on_created_at"
     t.index ["external_source", "external_id"], name: "index_listings_on_external_source_and_external_id", unique: true
     t.index ["external_url"], name: "index_listings_on_external_url", unique: true
     t.index ["import_status"], name: "index_listings_on_import_status"
+    t.index ["latitude", "longitude"], name: "index_listings_on_latitude_and_longitude"
     t.index ["location"], name: "index_listings_on_location"
     t.index ["platform"], name: "index_listings_on_platform"
     t.index ["user_id"], name: "index_listings_on_user_id"

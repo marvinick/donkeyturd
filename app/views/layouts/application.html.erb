@@ -10,6 +10,40 @@
 
     <%= yield :head %>
 
+    <%# Leaflet CSS for maps %>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin="" />
+    
+    <style>
+      /* Custom marker styles for imported listings */
+      .custom-marker {
+        background: transparent;
+        border: none;
+      }
+      
+      .marker-pin {
+        width: 30px;
+        height: 30px;
+        border-radius: 50% 50% 50% 0;
+        position: relative;
+        transform: rotate(-45deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .marker-pin.imported {
+        background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+        border: 2px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      }
+      
+      .marker-pin svg {
+        transform: rotate(45deg);
+      }
+    </style>
+
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 

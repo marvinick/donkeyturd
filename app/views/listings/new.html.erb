@@ -54,6 +54,35 @@
           <p class="text-sm text-gray-500 mt-1">City, state/province, country</p>
         </div>
 
+        <!-- Map Location -->
+        <div>
+          <%= f.label :coordinates, "Set Location on Map", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <div class="border border-gray-300 rounded-lg overflow-hidden">
+            <div id="location-map" 
+                 class="w-full h-64"
+                 data-controller="map"
+                 data-map-latitude-value="<%= @listing.latitude || 40.7128 %>"
+                 data-map-longitude-value="<%= @listing.longitude || -74.0060 %>"
+                 data-map-zoom-value="10"
+                 data-map-show-marker-value="<%= @listing.has_coordinates? %>">
+            </div>
+          </div>
+          <p class="text-sm text-gray-500 mt-1">Click on the map to set the exact location</p>
+          
+          <!-- Hidden coordinate fields -->
+          <%= f.hidden_field :latitude %>
+          <%= f.hidden_field :longitude %>
+          
+          <!-- Coordinate display -->
+          <div class="mt-2 text-xs text-gray-500" id="coordinates-display">
+            <% if @listing.has_coordinates? %>
+              Coordinates: <%= @listing.coordinates_display %>
+            <% else %>
+              Click on the map to set coordinates
+            <% end %>
+          </div>
+        </div>
+
         <!-- View Type -->
         <div>
           <%= f.label :view_type, "View Type", class: "block text-sm font-medium text-gray-700 mb-2" %>

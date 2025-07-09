@@ -207,6 +207,37 @@
             <% end %>
           </dl>
         </div>
+
+        <!-- Location Map -->
+        <% if @listing.has_coordinates? %>
+          <div class="mb-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Location</h3>
+            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div id="listing-map" 
+                   class="h-64 w-full"
+                   data-controller="map"
+                   data-map-latitude-value="<%= @listing.latitude %>"
+                   data-map-longitude-value="<%= @listing.longitude %>"
+                   data-map-zoom-value="14"
+                   data-map-show-marker-value="true"
+                   data-title="<%= @listing.title %>"
+                   data-address="<%= @listing.location %>">
+              </div>
+              <div class="p-4 bg-gray-50 border-t border-gray-200">
+                <p class="text-sm text-gray-600">
+                  <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <%= @listing.location %>
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  Coordinates: <%= @listing.coordinates_display %>
+                </p>
+              </div>
+            </div>
+          </div>
+        <% end %>
       </div>
 
       <!-- Right Column - Booking Card -->
@@ -302,31 +333,3 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     </svg>
-                    <%= listing.location %>
-                  </p>
-                  
-                  <div class="flex items-center justify-between">
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                      <%= listing.view_type_display %>
-                    </span>
-                    
-                    <% if listing.price_range.present? %>
-                      <span class="text-sm font-semibold text-gray-900">
-                        <%= listing.price_range %>
-                      </span>
-                    <% end %>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-        
-        <div class="text-center mt-8">
-          <%= link_to "View All #{@listing.view_type_display} Views", listings_path(view_type: @listing.view_type),
-                      class: "bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium" %>
-        </div>
-      </div>
-    </section>
-  <% end %>
-</div>

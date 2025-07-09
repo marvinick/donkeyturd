@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       get :search_external
       post :import_external
       get :api_status
+      get :map
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
