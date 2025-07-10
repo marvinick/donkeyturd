@@ -1,0 +1,213 @@
+<% content_for :title, @meta_title %>
+<% content_for :description, @meta_description %>
+
+<!-- Breadcrumbs -->
+<nav class="mb-6 text-sm text-gray-600">
+  <ol class="flex items-center space-x-2">
+    <li class="flex items-center">
+      <%= link_to "Home", root_path, class: "hover:text-blue-600" %>
+    </li>
+    <li class="flex items-center">
+      <svg class="w-4 h-4 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+      </svg>
+      <%= link_to "Cities", cities_path, class: "hover:text-blue-600" %>
+    </li>
+    <li class="flex items-center">
+      <svg class="w-4 h-4 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+      </svg>
+      <%= link_to @city.display_name, city_path(@city), class: "hover:text-blue-600" %>
+    </li>
+    <li class="flex items-center">
+      <svg class="w-4 h-4 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+      </svg>
+      <span class="text-gray-900 font-medium"><%= @view_type.humanize %> Views</span>
+    </li>
+  </ol>
+</nav>
+
+<!-- Hero Section -->
+<div class="bg-gradient-to-r from-green-600 to-emerald-700 text-white rounded-lg mb-8 overflow-hidden">
+  <div class="px-8 py-12">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+      <div class="mb-6 lg:mb-0">
+        <h1 class="text-4xl lg:text-5xl font-bold mb-4">
+          <%= @view_type.humanize %> Views in <%= @city.display_name %>
+        </h1>
+        <p class="text-xl text-green-100 mb-4">
+          Discover <%= @listings.count %> properties with stunning <%= @view_type %> views
+        </p>
+        
+        <!-- Related View Types -->
+        <% if @related_view_types.any? %>
+          <div class="flex flex-wrap gap-2">
+            <span class="text-green-100 text-sm mr-2">Also explore:</span>
+            <% @related_view_types.each do |related_type| %>
+              <%= link_to "#{related_type.humanize} Views", 
+                  city_view_type_path(@city, related_type),
+                  class: "bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full text-sm transition-colors" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      
+      <div class="text-right">
+        <div class="text-3xl font-bold mb-2"><%= @listings.count %></div>
+        <div class="text-green-100">Properties Found</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Back to City -->
+<div class="mb-6">
+  <%= link_to city_path(@city),
+      class: "inline-flex items-center text-blue-600 hover:text-blue-800 font-medium" do %>
+    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+    </svg>
+    Back to <%= @city.display_name %>
+  <% end %>
+</div>
+
+<!-- View Icon and Description -->
+<div class="bg-white border border-gray-200 rounded-lg p-6 mb-8">
+  <div class="flex items-center mb-4">
+    <div class="text-4xl mr-4">
+      <%= case @view_type
+          when 'mountain' then '🏔️'
+          when 'ocean' then '🌊' 
+          when 'lake' then '🏞️'
+          when 'city' then '🏙️'
+          when 'desert' then '🏜️'
+          when 'forest' then '🌲'
+          when 'river' then '🏞️'
+          when 'canyon' then '🏔️'
+          when 'valley' then '🌄'
+          when 'beach' then '🏖️'
+          else '🌄'
+          end %>
+    </div>
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900">
+        <%= @view_type.humanize %> Views in <%= @city.display_name %>
+      </h2>
+      <p class="text-gray-600">
+        <%= case @view_type
+            when 'mountain' then "Experience breathtaking mountain vistas and alpine scenery"
+            when 'ocean' then "Wake up to endless ocean horizons and coastal beauty"
+            when 'lake' then "Enjoy serene lakeside views and peaceful waters"
+            when 'city' then "Take in stunning urban skylines and city lights"
+            when 'desert' then "Marvel at vast desert landscapes and dramatic sunsets"
+            when 'forest' then "Immerse yourself in lush forest canopies and nature"
+            when 'river' then "Relax by flowing rivers and waterfront tranquility"
+            when 'canyon' then "Witness dramatic canyon views and geological wonders"
+            when 'valley' then "Appreciate rolling valley landscapes and pastoral beauty"
+            when 'beach' then "Enjoy pristine beach views and coastal paradise"
+            else "Discover beautiful scenic views and natural landscapes"
+            end %>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Properties Grid -->
+<% if @listings.any? %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <% @listings.each do |listing| %>
+      <%= render 'listings/listing_card', listing: listing %>
+    <% end %>
+  </div>
+  
+  <!-- Load More (if needed) -->
+  <% if @listings.count == 12 %>
+    <div class="text-center mb-8">
+      <%= link_to "Load More Properties", 
+          city_view_type_path(@city, @view_type, page: (params[:page].to_i + 1).to_s),
+          class: "bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors" %>
+    </div>
+  <% end %>
+<% else %>
+  <!-- Empty State -->
+  <div class="text-center py-12">
+    <div class="text-6xl mb-4">
+      <%= case @view_type
+          when 'mountain' then '🏔️'
+          when 'ocean' then '🌊' 
+          when 'lake' then '🏞️'
+          when 'city' then '🏙️'
+          when 'desert' then '🏜️'
+          when 'forest' then '🌲'
+          when 'river' then '🏞️'
+          when 'canyon' then '🏔️'
+          when 'valley' then '🌄'
+          when 'beach' then '🏖️'
+          else '🌄'
+          end %>
+    </div>
+    <h3 class="text-lg font-medium text-gray-900 mb-2">No <%= @view_type %> view properties found</h3>
+    <p class="text-gray-600 mb-6">
+      We don't have any properties with <%= @view_type %> views in <%= @city.display_name %> yet.
+    </p>
+    
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <%= link_to "Browse All Properties in #{@city.display_name}", city_path(@city), 
+          class: "bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors" %>
+      <%= link_to "Explore Other Cities", cities_path, 
+          class: "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg transition-colors" %>
+    </div>
+  </div>
+<% end %>
+
+<!-- Other View Types in City -->
+<% if @related_view_types.any? %>
+  <section class="mb-12">
+    <h3 class="text-xl font-semibold text-gray-900 mb-6">Other View Types in <%= @city.display_name %></h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <% @related_view_types.each do |view_type| %>
+        <% count = @city.listings_by_view_type[view_type] || 0 %>
+        <%= link_to city_view_type_path(@city, view_type),
+            class: "bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow" do %>
+          <div class="text-center">
+            <div class="text-3xl mb-3">
+              <%= case view_type
+                  when 'mountain' then '🏔️'
+                  when 'ocean' then '🌊' 
+                  when 'lake' then '🏞️'
+                  when 'city' then '🏙️'
+                  when 'desert' then '🏜️'
+                  when 'forest' then '🌲'
+                  when 'river' then '🏞️'
+                  when 'canyon' then '🏔️'
+                  when 'valley' then '🌄'
+                  when 'beach' then '🏖️'
+                  else '🌄'
+                  end %>
+            </div>
+            <h4 class="font-medium text-gray-900 mb-2"><%= view_type.humanize %> Views</h4>
+            <p class="text-sm text-gray-600"><%= count %> properties</p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+<% end %>
+
+<!-- CTA Section -->
+<div class="bg-gray-50 rounded-lg p-8 text-center">
+  <h3 class="text-2xl font-bold text-gray-900 mb-4">
+    Can't Find What You're Looking For?
+  </h3>
+  <p class="text-gray-600 mb-6">
+    Explore more destinations or browse all view types to find your perfect scenic getaway.
+  </p>
+  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+    <%= link_to "Browse All Cities", cities_path, 
+        class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors" %>
+    <%= link_to "View All #{@view_type.humanize} Properties", 
+        listings_path(view_type: @view_type),
+        class: "bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg transition-colors" %>
+  </div>
+</div>

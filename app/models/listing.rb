@@ -16,8 +16,8 @@ class Listing < ApplicationRecord
   validates :location, presence: true, length: { minimum: 3, maximum: 100 }
   validates :view_type, presence: true, inclusion: { in: VIEW_TYPES }
   validates :price_range, inclusion: { in: PRICE_RANGES }, allow_blank: true
-  validates :latitude, presence: true, numericality: { in: -90..90 }
-  validates :longitude, presence: true, numericality: { in: -180..180 }
+  validates :latitude, numericality: { in: -90..90 }, allow_blank: true
+  validates :longitude, numericality: { in: -180..180 }, allow_blank: true
   validate :acceptable_images
 
   # URL validation

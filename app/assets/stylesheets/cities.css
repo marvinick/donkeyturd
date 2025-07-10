@@ -1,0 +1,196 @@
+/* City pages custom styles */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.marker-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  position: relative;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-pin.imported {
+  background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.marker-pin svg {
+  transform: rotate(45deg);
+}
+
+/* Map popup styles */
+.map-popup {
+  max-width: 250px;
+  font-size: 14px;
+}
+
+.map-popup .inline-block {
+  display: inline-block;
+}
+
+/* Gradient backgrounds for city cards */
+.city-card-bg {
+  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+}
+
+.city-card-bg-2 {
+  background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+}
+
+.city-card-bg-3 {
+  background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.city-card-bg-4 {
+  background: linear-gradient(45deg, #43e97b 0%, #38f9d7 100%);
+}
+
+/* Custom scrollbar for better UX */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive improvements */
+@media (max-width: 640px) {
+  .city-hero {
+    padding: 2rem 1rem;
+  }
+  
+  .city-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .filter-section {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .filter-pills {
+    display: flex;
+    gap: 0.5rem;
+    min-width: max-content;
+    padding-bottom: 0.5rem;
+  }
+}
+
+/* Enhanced hover effects */
+.listing-card {
+  transition: all 0.3s ease;
+}
+
+.listing-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.city-card {
+  transition: all 0.3s ease;
+}
+
+.city-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* View type icons animation */
+.view-type-icon {
+  transition: transform 0.2s ease;
+}
+
+.view-type-card:hover .view-type-icon {
+  transform: scale(1.1);
+}
+
+/* Status badges */
+.status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.verified-badge {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.imported-badge {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+/* Breadcrumb improvements */
+.breadcrumb-separator {
+  margin: 0 0.5rem;
+  color: #9ca3af;
+}
+
+/* Map container styling */
+.map-container {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Button improvements */
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border: none;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}

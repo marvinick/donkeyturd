@@ -1,1 +1,13 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /users/
+Disallow: /rails/
+
+# Sitemap location
+Sitemap: https://yourapp.com/sitemap.xml
+
+# Crawl delay for being respectful
+Crawl-delay: 1

@@ -27,6 +27,12 @@ Rails.application.routes.draw do
   get "/ocean-views", to: 'listings#index', defaults: { view_type: 'ocean' }, as: "ocean_views"
   get "/lake-views", to: 'listings#index', defaults: { view_type: 'lake' }, as: "lake_views"
   get "/city-views", to: 'listings#index', defaults: { view_type: 'city' }, as: "city_views"
+  get "/desert-views", to: 'listings#index', defaults: { view_type: 'desert' }, as: "desert_views"
+  get "/forest-views", to: 'listings#index', defaults: { view_type: 'forest' }, as: "forest_views"
+  get "/river-views", to: 'listings#index', defaults: { view_type: 'river' }, as: "river_views"
+  get "/canyon-views", to: 'listings#index', defaults: { view_type: 'canyon' }, as: "canyon_views"
+  get "/valley-views", to: 'listings#index', defaults: { view_type: 'valley' }, as: "valley_views"
+  get "/beach-views", to: 'listings#index', defaults: { view_type: 'beach' }, as: "beach_views"
   
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

@@ -1,4 +1,350 @@
-<div>
-  <h1 class="font-bold text-4xl">Cities#show</h1>
-  <p>Find me in app/views/cities/show.html.erb</p>
+<div class="bg-white">
+  <!-- Hero Section -->
+  <div class="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <!-- Breadcrumbs -->
+      <nav class="mb-8" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-2 text-blue-200">
+          <% @breadcrumbs.each_with_index do |crumb, index| %>
+            <% if index > 0 %>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+              </svg>
+            <% end %>
+            <li>
+              <% if crumb[:url] %>
+                <%= link_to crumb[:name], crumb[:url], class: "hover:text-white transition-colors" %>
+              <% else %>
+                <span class="text-white font-medium"><%= crumb[:name] %></span>
+              <% end %>
+            </li>
+          <% end %>
+        </ol>
+      </nav>
+
+      <div class="text-center">
+        <h1 class="text-4xl md:text-6xl font-bold mb-4">
+          <% if @current_view_type %>
+            <%= @current_view_type.humanize %> Views in <%= @city.display_name %>
+          <% else %>
+            <%= @city.display_name %>
+          <% end %>
+        </h1>
+        
+        <p class="text-xl md:text-2xl mb-6 text-blue-100">
+          <% if @current_view_type %>
+            <%= @total_listings %> properties with stunning <%= @current_view_type %> views
+          <% else %>
+            <%= @total_listings %> verified properties with breathtaking views
+          <% end %>
+        </p>
+        
+        <div class="flex items-center justify-center space-x-6 text-blue-200">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+            </svg>
+            <span><%= @city.country %></span>
+          </div>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clip-rule="evenodd"></path>
+            </svg>
+            <span><%= pluralize(@total_listings, 'property') %></span>
+          </div>
+          <% if @view_types_in_city.keys.count > 1 %>
+            <div class="flex items-center">
+              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+              </svg>
+              <span><%= pluralize(@view_types_in_city.keys.count, 'view type') %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Type Filter -->
+  <% if @view_types_in_city.any? && !@current_view_type %>
+    <div class="border-b border-gray-200 bg-white sticky top-0 z-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-semibold text-gray-900">Browse by View Type</h2>
+          <div class="flex flex-wrap gap-2">
+            <%= link_to "All Views", city_path(@city), 
+                        class: "inline-flex items-center px-4 py-2 rounded-full text-sm font-medium #{@current_view_type.nil? ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+            <% @view_types_in_city.sort_by { |_, count| -count }.each do |view_type, count| %>
+              <%= link_to view_type_city_path(@city, view_type), 
+                          class: "inline-flex items-center px-4 py-2 rounded-full text-sm font-medium #{@current_view_type == view_type ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" do %>
+                <%= view_type.humanize %> 
+                <span class="ml-1 bg-white/20 text-xs px-1.5 py-0.5 rounded-full"><%= count %></span>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Featured Listings -->
+    <% if @featured_listings.any? %>
+      <section class="mb-16">
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">Featured Properties</h2>
+          <p class="text-gray-600">Hand-picked accommodations with the most stunning views in <%= @city.display_name %></p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <% @featured_listings.each do |listing| %>
+            <%= render 'listings/listing_card', listing: listing %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <!-- All Listings -->
+    <section class="mb-16">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900 mb-2">
+            <% if @current_view_type %>
+              <%= @current_view_type.humanize %> View Properties
+            <% else %>
+              All Properties
+            <% end %>
+          </h2>
+          <p class="text-gray-600">
+            <% if @current_view_type %>
+              <%= @total_listings %> properties with <%= @current_view_type %> views
+            <% else %>
+              <%= @total_listings %> verified properties with amazing views
+            <% end %>
+          </p>
+        </div>
+        
+        <!-- Sorting/Filtering -->
+        <div class="flex items-center space-x-4">
+          <%= form_with url: request.path, method: :get, local: true, class: "flex items-center space-x-2" do |f| %>
+            <%= f.hidden_field :view_type, value: @current_view_type if @current_view_type %>
+            <%= f.select :platform, 
+                         options_for_select([['All Platforms', '']] + Listing::PLATFORMS.map { |p| [p.humanize, p] }, @current_platform),
+                         {},
+                         { class: "rounded-lg border border-gray-300 px-3 py-2 text-sm", 
+                           onchange: "this.form.submit();" } %>
+          <% end %>
+        </div>
+      </div>
+
+      <% if @listings.any? %>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <% @listings.each do |listing| %>
+            <%= render 'listings/listing_card', listing: listing %>
+          <% end %>
+        </div>
+        
+        <!-- Pagination -->
+        <% if @total_pages > 1 %>
+          <div class="mt-12 flex justify-center">
+            <nav class="flex items-center space-x-2">
+              <% if @page > 1 %>
+                <%= link_to "← Previous", request.path + "?" + { page: @page - 1 }.to_query, 
+                            class: "px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50" %>
+              <% end %>
+              
+              <% (1..@total_pages).each do |page_num| %>
+                <% if page_num == @page %>
+                  <span class="px-4 py-2 bg-blue-600 text-white rounded-lg"><%= page_num %></span>
+                <% elsif (page_num - @page).abs <= 2 || page_num == 1 || page_num == @total_pages %>
+                  <%= link_to page_num, request.path + "?" + { page: page_num }.to_query, 
+                              class: "px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50" %>
+                <% elsif (page_num - @page).abs == 3 %>
+                  <span class="px-2">...</span>
+                <% end %>
+              <% end %>
+              
+              <% if @page < @total_pages %>
+                <%= link_to "Next →", request.path + "?" + { page: @page + 1 }.to_query, 
+                            class: "px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50" %>
+              <% end %>
+            </nav>
+          </div>
+        <% end %>
+      <% else %>
+        <!-- Empty State -->
+        <div class="text-center py-16">
+          <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+          </svg>
+          <h3 class="text-xl font-medium text-gray-900 mb-2">No properties found</h3>
+          <p class="text-gray-600 mb-6">
+            <% if @current_view_type %>
+              No <%= @current_view_type %> view properties found in <%= @city.display_name %>.
+            <% else %>
+              No properties found in <%= @city.display_name %> yet.
+            <% end %>
+          </p>
+          <% unless @current_view_type %>
+            <%= link_to "Add a Listing", new_listing_path, 
+                        class: "inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
+          <% else %>
+            <%= link_to "View All Properties", city_path(@city), 
+                        class: "inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+
+    <!-- Map Section -->
+    <% if @all_listings_for_map.any? %>
+      <section class="mb-16">
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">Explore on Map</h2>
+          <p class="text-gray-600">See all properties with views in <%= @city.display_name %></p>
+        </div>
+        
+        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div id="city-map" 
+               class="w-full h-96"
+               data-controller="map"
+               data-map-latitude-value="<%= @city.latitude %>"
+               data-map-longitude-value="<%= @city.longitude %>"
+               data-map-zoom-value="12"
+               data-map-listings-value="<%= @all_listings_for_map.to_json.html_safe %>">
+          </div>
+        </div>
+      </section>
+    <% end %>
+
+    <!-- Related Cities -->
+    <% if @nearby_cities.any? %>
+      <section class="mb-16">
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">Nearby Destinations</h2>
+          <p class="text-gray-600">Other cities with amazing views near <%= @city.display_name %></p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% @nearby_cities.each do |nearby_city| %>
+            <%= link_to city_path(nearby_city), class: "group" do %>
+              <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-2">
+                  <%= nearby_city.display_name %>
+                </h3>
+                <p class="text-sm text-gray-600 mb-3">
+                  <%= pluralize(nearby_city.listings_count, 'property') %> with views
+                </p>
+                <div class="flex items-center justify-between">
+                  <span class="text-blue-600 font-medium text-sm">Explore →</span>
+                  <div class="flex items-center text-gray-400">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <!-- SEO Content -->
+    <section class="prose max-w-none">
+      <% destination_guide = @city.generate_destination_guide %>
+      
+      <h2><%= destination_guide[:title] %></h2>
+      <p class="lead"><%= destination_guide[:intro] %></p>
+      
+      <% if @current_view_type %>
+        <% view_content = @city.generate_view_type_content(@current_view_type) %>
+        <% if view_content %>
+          <h3><%= view_content[:title] %></h3>
+          <p><%= view_content[:content] %></p>
+        <% end %>
+      <% else %>
+        <h3>What Makes <%= @city.display_name %> Special?</h3>
+        <ul>
+          <% destination_guide[:highlights].each do |highlight| %>
+            <li><%= highlight %></li>
+          <% end %>
+        </ul>
+        
+        <% if destination_guide[:view_types_overview].any? %>
+          <h3>Types of Views Available</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 not-prose">
+            <% destination_guide[:view_types_overview].each do |view_info| %>
+              <div class="border border-gray-200 rounded-lg p-4">
+                <h4 class="font-semibold text-gray-900 mb-2">
+                  <%= link_to view_info[:humanized] + " Views", 
+                              view_type_city_path(@city, view_info[:view_type]), 
+                              class: "text-blue-600 hover:text-blue-800" %>
+                </h4>
+                <p class="text-sm text-gray-600"><%= view_info[:description] %></p>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+      
+      <h3>Planning Your Visit</h3>
+      <p><%= destination_guide[:best_time_to_visit] %></p>
+      
+      <!-- FAQ Section -->
+      <h3>Frequently Asked Questions</h3>
+      <% @faq_data.each do |faq| %>
+        <h4><%= faq[:question] %></h4>
+        <p><%= faq[:answer] %></p>
+      <% end %>
+    </section>
+  </div>
 </div>
+
+<!-- SEO Meta Tags -->
+<% content_for :head do %>
+  <meta name="description" content="<%= @meta_description %>">
+  <meta name="keywords" content="<%= @meta_keywords %>">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="<%= @meta_title %>">
+  <meta property="og:description" content="<%= @meta_description %>">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<%= @canonical_url %>">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= @meta_title %>">
+  <meta name="twitter:description" content="<%= @meta_description %>">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="<%= @canonical_url %>">
+  
+  <!-- JSON-LD Schema -->
+  <script type="application/ld+json">
+    <%= raw @schema_data.to_json %>
+  </script>
+  
+  <!-- FAQ Schema -->
+  <% if @faq_data.any? %>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        <% @faq_data.each_with_index do |faq, index| %>
+          {
+            "@type": "Question",
+            "name": "<%= faq[:question] %>",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "<%= faq[:answer] %>"
+            }
+          }<%= index < @faq_data.length - 1 ? ',' : '' %>
+        <% end %>
+      ]
+    }
+    </script>
+  <% end %>
+<% end %>

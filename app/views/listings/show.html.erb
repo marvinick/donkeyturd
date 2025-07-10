@@ -208,36 +208,7 @@
           </dl>
         </div>
 
-        <!-- Location Map -->
-        <% if @listing.has_coordinates? %>
-          <div class="mb-8">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Location</h3>
-            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-              <div id="listing-map" 
-                   class="h-64 w-full"
-                   data-controller="map"
-                   data-map-latitude-value="<%= @listing.latitude %>"
-                   data-map-longitude-value="<%= @listing.longitude %>"
-                   data-map-zoom-value="14"
-                   data-map-show-marker-value="true"
-                   data-title="<%= @listing.title %>"
-                   data-address="<%= @listing.location %>">
-              </div>
-              <div class="p-4 bg-gray-50 border-t border-gray-200">
-                <p class="text-sm text-gray-600">
-                  <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  </svg>
-                  <%= @listing.location %>
-                </p>
-                <p class="text-xs text-gray-500 mt-1">
-                  Coordinates: <%= @listing.coordinates_display %>
-                </p>
-              </div>
-            </div>
-          </div>
-        <% end %>
+       
       </div>
 
       <!-- Right Column - Booking Card -->
@@ -333,3 +304,130 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     </svg>
+                    <%= listing.location %>
+                  </p>
+                  
+                  <% if listing.city %>
+                    <p class="text-sm text-blue-600 mb-2">
+                      <%= link_to listing.city.name, city_path(listing.city), class: "hover:text-blue-800" %>
+                    </p>
+                  <% end %>
+                  
+                  <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      <%= listing.view_type_display %>
+                    </span>
+                    <% if listing.price_range.present? %>
+                      <span class="text-sm font-semibold text-gray-900">
+                        <%= listing.price_range %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        
+       
+      </div>
+    </section>
+  <% end %>
+
+  <!-- SEO Content Section -->
+  <section class="bg-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="prose max-w-none">
+        <% if @listing.city %>
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">
+            <%= @listing.view_type_display %> Views in <%= @listing.city.name %>
+          </h2>
+          <p class="text-gray-700 mb-6">
+            <%= @listing.city.name %> offers some of the most spectacular <%= @listing.view_type_display.downcase %> 
+            views in the region. <%= @listing.title %> is one of many incredible viewpoints where visitors can 
+            experience the natural beauty and breathtaking scenery that makes this destination special.
+          </p>
+          
+          <h3 class="text-xl font-semibold text-gray-900 mb-4">
+            Why Visit <%= @listing.city.name %>?
+          </h3>
+          <p class="text-gray-700 mb-6">
+            Whether you're seeking <%= @listing.view_type_display.downcase %> views for photography, relaxation, 
+            or adventure, <%= @listing.city.name %> provides diverse accommodation options with stunning vantage points. 
+            From luxury retreats to cozy cabins, you'll find the perfect place to wake up to incredible 
+            <%= @listing.view_type_display.downcase %> scenery.
+          </p>
+        <% else %>
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">
+            Experience Amazing <%= @listing.view_type_display %> Views
+          </h2>
+          <p class="text-gray-700 mb-6">
+            <%= @listing.title %> offers an exceptional <%= @listing.view_type_display.downcase %> viewing experience 
+            that showcases the natural beauty of <%= @listing.location %>. This carefully curated accommodation 
+            provides guests with unobstructed views and comfortable amenities for an unforgettable stay.
+          </p>
+        <% end %>
+        
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">
+          Planning Your Visit
+        </h3>
+        <p class="text-gray-700">
+          When booking your stay at <%= @listing.title %>, consider the best times for viewing and photography. 
+          The property is available through <%= @listing.platform_name %>, ensuring a secure and reliable booking experience. 
+          <% if @listing.price_range.present? %>
+            With rates in the <%= @listing.price_range %> range, this location offers excellent value for the quality of views provided.
+          <% end %>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Meta tags for SEO -->
+<% content_for :head do %>
+  <meta name="description" content="<%= @listing.title %> - Experience amazing <%= @listing.view_type_display.downcase %> views in <%= @listing.location %>. Book this <%= @listing.platform_name %> property for breathtaking scenery and unforgettable moments.">
+  <meta name="keywords" content="<%= @listing.view_type %> view, <%= @listing.location %>, <%= @listing.platform_name %>, scenic accommodation, vacation rental">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="<%= @listing.title %>">
+  <meta property="og:description" content="<%= truncate(@listing.description, length: 160) %>">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<%= request.original_url %>">
+  <% if @listing.images.attached? %>
+    <meta property="og:image" content="<%= url_for(@listing.main_image) %>">
+  <% end %>
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= @listing.title %>">
+  <meta name="twitter:description" content="<%= truncate(@listing.description, length: 160) %>">
+  <% if @listing.images.attached? %>
+    <meta name="twitter:image" content="<%= url_for(@listing.main_image) %>">
+  <% end %>
+  
+  <!-- JSON-LD Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    "name": "<%= @listing.title %>",
+    "description": "<%= strip_tags(@listing.description) %>",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "<%= @listing.location %>"
+    },
+    <% if @listing.latitude.present? && @listing.longitude.present? %>
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": <%= @listing.latitude %>,
+      "longitude": <%= @listing.longitude %>
+    },
+    <% end %>
+    <% if @listing.images.attached? %>
+    "image": "<%= url_for(@listing.main_image) %>",
+    <% end %>
+    "url": "<%= @listing.external_url %>",
+    "priceRange": "<%= @listing.price_range if @listing.price_range.present? %>"
+  }
+  </script>
+<% end %>
