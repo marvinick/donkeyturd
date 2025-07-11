@@ -1,16 +1,53 @@
 namespace :sitemap do
-  desc "Generate comprehensive sitemap for all city and view type pages"
+  desc "Generate comprehensive sitemap system with multiple files"
   task :generate => :environment do
-    puts "Generating comprehensive sitemap..."
+    service = SitemapService.new
+    service.generate_all_sitemaps
+  end
+  
+  desc "Generate sitemap and submit to search engines"
+  task :generate_and_submit => :environment do
+    service = SitemapService.new
+    service.generate_all_sitemaps
+    service.submit_to_search_engines
+  end
+  
+  desc "Submit existing sitemap to search engines"
+  task :submit => :environment do
+    service = SitemapService.new
+    service.submit_to_search_engines
+  end
+  
+  desc "Ping search engines about sitemap updates"
+  task :ping => :environment do
+    service = SitemapService.new
+    service.ping_search_engines
+  end
+  
+  desc "Schedule regular sitemap generation (background job)"
+  task :schedule => :environment do
+    SitemapGenerationJob.perform_later(submit_to_search_engines: true, ping_search_engines: true)
+    puts "✅ Sitemap generation job scheduled"
+  end
+  
+  desc "Start recurring sitemap generation system"
+  task :start_recurring => :environment do
+    RecurringSitemapJob.perform_later
+    puts "✅ Recurring sitemap generation system started"
+  end
+  
+  desc "Generate sitemap using legacy method (kept for compatibility)"
+  task :generate_legacy => :environment do
+    puts "Generating legacy sitemap..."
     
     sitemap_content = generate_sitemap_xml
     
     # Write to public directory
-    File.open(Rails.root.join('public', 'sitemap.xml'), 'w') do |file|
+    File.open(Rails.root.join('public', 'sitemap_legacy.xml'), 'w') do |file|
       file.write(sitemap_content)
     end
     
-    puts "Sitemap generated successfully at public/sitemap.xml"
+    puts "Legacy sitemap generated successfully at public/sitemap_legacy.xml"
     puts "Total URLs: #{count_urls(sitemap_content)}"
   end
   

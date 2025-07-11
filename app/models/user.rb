@@ -22,4 +22,12 @@ class User < ApplicationRecord
   def full_name
     name
   end
+
+  def admin?
+    # For now, check if user has admin role or is first user
+    # In production, you'd want a proper role system
+    return true if self.id == 1  # First user is admin
+    return true if self.email.in?(['admin@example.com', 'marvkipi@gmail.com'])  # Add your email here
+    false
+  end
 end

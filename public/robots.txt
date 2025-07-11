@@ -5,9 +5,10 @@ Allow: /
 Disallow: /admin/
 Disallow: /users/
 Disallow: /rails/
+Disallow: /cable/
 
 # Sitemap location
-Sitemap: https://yourapp.com/sitemap.xml
+Sitemap: http://localhost:3000/sitemap.xml
 
 # Crawl delay for being respectful
 Crawl-delay: 1

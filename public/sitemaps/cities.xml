@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url><loc>http://localhost:3000/cities/malibu-california</loc><changefreq>weekly</changefreq><priority>0.8</priority><lastmod>2025-07-10T03:35:47Z</lastmod></url>
+<url><loc>http://localhost:3000/cities/malibu-california/ocean-views</loc><changefreq>weekly</changefreq><priority>0.7</priority><lastmod>2025-07-10T03:35:47Z</lastmod></url>
+<url><loc>http://localhost:3000/cities/tulsa-ok</loc><changefreq>weekly</changefreq><priority>0.8</priority><lastmod>2025-07-10T03:35:47Z</lastmod></url>
+<url><loc>http://localhost:3000/cities/tulsa-ok/mountain-views</loc><changefreq>weekly</changefreq><priority>0.7</priority><lastmod>2025-07-10T03:35:47Z</lastmod></url>
+<url><loc>http://localhost:3000/cities/new-york-city-new-york</loc><changefreq>weekly</changefreq><priority>0.8</priority><lastmod>2025-07-10T03:35:47Z</lastmod></url>
+<url><loc>http://localhost:3000/cities/new-york-city-new-york/city-views</loc><changefreq>weekly</changefreq><priority>0.7</priority><lastmod>2025-07-10T03:35:47Z</lastmod></url>
+<url><loc>http://localhost:3000/cities/banff-alberta-1</loc><changefreq>weekly</changefreq><priority>0.8</priority><lastmod>2025-07-10T03:35:47Z</lastmod></url>
+<url><loc>http://localhost:3000/cities/banff-alberta-1/mountain-views</loc><changefreq>weekly</changefreq><priority>0.7</priority><lastmod>2025-07-10T03:35:47Z</lastmod></url>
+</urlset>

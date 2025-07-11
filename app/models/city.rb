@@ -9,6 +9,10 @@ class City < ApplicationRecord
   
   before_validation :generate_slug, if: -> { slug.blank? && name.present? }
   
+  # Callbacks for sitemap updates
+  after_save :schedule_sitemap_update
+  after_destroy :schedule_sitemap_update
+  
   scope :featured, -> { where(featured: true) }
   scope :by_country, ->(country) { where(country: country) }
   scope :with_listings, -> { joins(:listings).where(listings: { active: true }).distinct }
@@ -18,10 +22,10 @@ class City < ApplicationRecord
   # Add method to find cities near coordinates
   scope :near_coordinates, ->(lat, lng, radius_km = 50) {
     where(
-      "6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude))) < ?",
+      "6371 * acos(cos(radians(?)) * cos(radians(cities.latitude)) * cos(radians(cities.longitude) - radians(?)) + sin(radians(?)) * sin(radians(cities.latitude))) < ?",
       lat, lng, lat, radius_km
     ).order(
-      Arel.sql("6371 * acos(cos(radians(#{lat})) * cos(radians(latitude)) * cos(radians(longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(latitude)))")
+      Arel.sql("6371 * acos(cos(radians(#{lat})) * cos(radians(cities.latitude)) * cos(radians(cities.longitude) - radians(#{lng})) + sin(radians(#{lat})) * sin(radians(cities.latitude)))")
     )
   }
   
@@ -214,5 +218,13 @@ class City < ApplicationRecord
   
   def generate_best_time_content
     "#{display_name} offers beautiful views year-round, with each season providing unique perspectives of the landscape. Consider visiting during different times of the year to experience varying weather conditions and seasonal changes that enhance the natural beauty of your chosen accommodation's views."
+  end
+  
+  def schedule_sitemap_update
+    # Schedule sitemap update in background (delay to avoid multiple rapid updates)
+    SitemapGenerationJob.set(wait: 5.minutes).perform_later(
+      submit_to_search_engines: false,
+      ping_search_engines: true
+    )
   end
 end

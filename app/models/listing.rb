@@ -24,6 +24,10 @@ class Listing < ApplicationRecord
   validate :valid_external_url
   validate :platform_matches_url
 
+  # Callbacks for sitemap updates
+  after_save :schedule_sitemap_update
+  after_destroy :schedule_sitemap_update
+
   # Scopes
   scope :active, -> { where(active: true) }
   scope :by_view_type, ->(type) { where(view_type: type) }
@@ -194,5 +198,13 @@ class Listing < ApplicationRecord
     
     # Update current city count
     city&.update_column(:listings_count, city.listings.active.count)
+  end
+
+  def schedule_sitemap_update
+    # Schedule sitemap update in background (delay to avoid multiple rapid updates)
+    SitemapGenerationJob.set(wait: 5.minutes).perform_later(
+      submit_to_search_engines: false,
+      ping_search_engines: true
+    )
   end
 end

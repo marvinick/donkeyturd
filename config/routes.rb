@@ -22,6 +22,17 @@ Rails.application.routes.draw do
     end
   end
   
+  # Admin routes
+  namespace :admin do
+    resources :sitemap, only: [:index] do
+      collection do
+        post :generate
+        post :submit
+        post :ping
+      end
+    end
+  end
+  
   # SEO-friendly view routes
   get "/mountain-views", to: 'listings#index', defaults: { view_type: 'mountain' }, as: "mountain_views"
   get "/ocean-views", to: 'listings#index', defaults: { view_type: 'ocean' }, as: "ocean_views"
