@@ -54,6 +54,55 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    
+    <script>
+      function toggleDropdown() {
+        const dropdown = document.getElementById('adminDropdown');
+        const userDropdown = document.getElementById('userDropdown');
+        
+        // Close user dropdown if open
+        if (userDropdown) {
+          userDropdown.classList.add('hidden');
+        }
+        
+        // Toggle admin dropdown
+        if (dropdown) {
+          dropdown.classList.toggle('hidden');
+        }
+      }
+      
+      function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const adminDropdown = document.getElementById('adminDropdown');
+        
+        // Close admin dropdown if open
+        if (adminDropdown) {
+          adminDropdown.classList.add('hidden');
+        }
+        
+        // Toggle user dropdown
+        if (dropdown) {
+          dropdown.classList.toggle('hidden');
+        }
+      }
+      
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', function(event) {
+        const adminDropdown = document.getElementById('adminDropdown');
+        const userDropdown = document.getElementById('userDropdown');
+        const clickedButton = event.target.closest('button');
+        
+        // Check if clicked button is one of our dropdown buttons
+        const isDropdownButton = clickedButton && 
+          (clickedButton.getAttribute('onclick') === 'toggleDropdown()' || 
+           clickedButton.getAttribute('onclick') === 'toggleUserDropdown()');
+        
+        if (!isDropdownButton) {
+          adminDropdown?.classList.add('hidden');
+          userDropdown?.classList.add('hidden');
+        }
+      });
+    </script>
   </head>
 
   <body class="bg-white">
@@ -90,23 +139,51 @@
                         class: "text-gray-700 hover:text-gray-900 font-medium" %>
             <%= link_to "Cities", cities_path,
                         class: "text-gray-700 hover:text-gray-900 font-medium" %>
+            <%= link_to "Blog", blog_index_path,
+                        class: "text-gray-700 hover:text-gray-900 font-medium" %>
             <% if user_signed_in? %>
               <% if current_user.admin? %>
-                <%= link_to "Admin", admin_sitemap_index_path,
-                            class: "text-blue-600 hover:text-blue-800 font-medium" %>
+                <!-- Admin dropdown -->
+                <div class="relative">
+                  <button onclick="toggleDropdown()" class="flex items-center text-blue-600 hover:text-blue-800 font-medium">
+                    <span class="mr-1">Admin</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </button>
+                  
+                  <!-- Dropdown menu -->
+                  <div id="adminDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                    <%= link_to "Sitemap Management", admin_sitemap_index_path, 
+                                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                    <%= link_to "Blog Posts", admin_blog_posts_path, 
+                                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                    <%= link_to "New Blog Post", new_admin_blog_post_path, 
+                                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                  </div>
+                </div>
               <% end %>
+              
               <!-- User dropdown -->
               <div class="relative">
-                <button class="flex items-center text-gray-700 hover:text-gray-900 font-medium">
+                <button onclick="toggleUserDropdown()" class="flex items-center text-gray-700 hover:text-gray-900 font-medium">
                   <span class="mr-1"><%= current_user.name %></span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
                 </button>
-                <!-- Dropdown menu would go here -->
+                
+                <!-- User dropdown menu -->
+                <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                  <%= link_to "My Listings", listings_path, 
+                              class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                  <%= link_to "Profile", edit_user_registration_path, 
+                              class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                  <div class="border-t border-gray-100"></div>
+                  <%= button_to "Sign out", destroy_user_session_path, method: :delete,
+                              class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                </div>
               </div>
-              <%= button_to "Sign out", destroy_user_session_path, method: :delete,
-                          class: "text-gray-700 hover:text-gray-900 font-medium" %>
             <% else %>
               <%= link_to "Sign in", new_user_session_path,
                           class: "text-gray-700 hover:text-gray-900 font-medium" %>

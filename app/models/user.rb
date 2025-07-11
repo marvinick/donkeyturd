@@ -6,6 +6,7 @@ class User < ApplicationRecord
          omniauth_providers: [:google_oauth2]
 
   has_many :listings, dependent: :destroy
+  has_many :blog_posts, dependent: :destroy
 
   validates :name, presence: true
 

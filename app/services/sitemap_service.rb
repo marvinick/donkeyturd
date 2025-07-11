@@ -18,6 +18,7 @@ class SitemapService
     generate_cities_sitemap
     generate_listings_sitemap
     generate_view_types_sitemap
+    generate_blog_sitemap
     
     # Generate sitemap index
     generate_sitemap_index
@@ -158,6 +159,24 @@ class SitemapService
     xml << '</urlset>'
     
     write_sitemap_file('view_types.xml', xml.join("\n"))
+  end
+  
+  def generate_blog_sitemap
+    puts "📝 Generating blog sitemap..."
+    
+    xml = build_xml_header
+    
+    # Blog index
+    xml << url_entry("#{base_url}/blog", 'weekly', '0.8')
+    
+    # Blog posts
+    BlogPost.published.find_each do |post|
+      xml << url_entry("#{base_url}/blog/#{post.slug}", 'monthly', '0.7', post.updated_at)
+    end
+    
+    xml << '</urlset>'
+    
+    write_sitemap_file('blog.xml', xml.join("\n"))
   end
   
   def generate_sitemap_index

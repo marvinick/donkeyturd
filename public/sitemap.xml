@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <sitemap>
+<loc>http://localhost:3000/sitemaps/blog.xml</loc>
+<lastmod>2025-07-11T02:35:28Z</lastmod>
+</sitemap>
+<sitemap>
 <loc>http://localhost:3000/sitemaps/cities.xml</loc>
-<lastmod>2025-07-11T02:21:23Z</lastmod>
+<lastmod>2025-07-11T02:35:28Z</lastmod>
 </sitemap>
 <sitemap>
 <loc>http://localhost:3000/sitemaps/listings.xml</loc>
-<lastmod>2025-07-11T02:21:23Z</lastmod>
+<lastmod>2025-07-11T02:35:28Z</lastmod>
 </sitemap>
 <sitemap>
 <loc>http://localhost:3000/sitemaps/static.xml</loc>
-<lastmod>2025-07-11T02:21:23Z</lastmod>
+<lastmod>2025-07-11T02:35:28Z</lastmod>
 </sitemap>
 <sitemap>
 <loc>http://localhost:3000/sitemaps/view_types.xml</loc>
-<lastmod>2025-07-11T02:21:23Z</lastmod>
+<lastmod>2025-07-11T02:35:28Z</lastmod>
 </sitemap>
 </sitemapindex>

@@ -31,7 +31,18 @@ Rails.application.routes.draw do
         post :ping
       end
     end
+    
+    resources :blog_posts do
+      member do
+        patch :publish
+        patch :unpublish
+        patch :toggle_featured
+      end
+    end
   end
+  
+  # Public blog routes
+  resources :blog, only: [:index, :show], path: 'blog', controller: 'blog'
   
   # SEO-friendly view routes
   get "/mountain-views", to: 'listings#index', defaults: { view_type: 'mountain' }, as: "mountain_views"
