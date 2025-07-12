@@ -162,4 +162,66 @@
   
   <!-- Canonical URL -->
   <link rel="canonical" href="<%= request.original_url %>">
+  
+  <!-- JSON-LD Schema for Blog -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "<%= @meta_title %>",
+    "description": "<%= @meta_description %>",
+    "url": "<%= request.original_url %>",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Views",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "<%= request.base_url %>/icon.png"
+      }
+    },
+    "blogPost": [
+      <% @blog_posts.each_with_index do |post, index| %>
+        {
+          "@type": "BlogPosting",
+          "headline": "<%= post.title %>",
+          "description": "<%= post.excerpt %>",
+          "author": {
+            "@type": "Person",
+            "name": "<%= post.user.name %>"
+          },
+          "datePublished": "<%= post.display_date.iso8601 %>",
+          "dateModified": "<%= post.updated_at.iso8601 %>",
+          "url": "<%= blog_url(post) %>",
+          <% if post.images.any? %>
+          "image": "<%= url_for(post.images.first) %>",
+          <% end %>
+          "articleSection": "Travel Guide",
+          "wordCount": <%= post.content.split.size %>
+        }<%= index < @blog_posts.count - 1 ? ',' : '' %>
+      <% end %>
+    ]
+  }
+  </script>
+  
+  <!-- JSON-LD Schema for Breadcrumbs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "<%= root_url %>"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "<%= request.original_url %>"
+      }
+    ]
+  }
+  </script>
 <% end %>

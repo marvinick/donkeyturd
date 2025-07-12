@@ -414,7 +414,8 @@
     "description": "<%= strip_tags(@listing.description) %>",
     "address": {
       "@type": "PostalAddress",
-      "addressLocality": "<%= @listing.location %>"
+      "addressLocality": "<%= @listing.location %>"<% if @listing.city.present? %>,
+      "addressRegion": "<%= @listing.city.name %>"<% end %>
     },
     <% if @listing.latitude.present? && @listing.longitude.present? %>
     "geo": {
@@ -424,10 +425,29 @@
     },
     <% end %>
     <% if @listing.images.attached? %>
-    "image": "<%= url_for(@listing.main_image) %>",
+    "image": [
+      <% @listing.images.each_with_index do |image, index| %>
+        "<%= url_for(image) %>"<%= ',' unless index == @listing.images.count - 1 %>
+      <% end %>
+    ],
     <% end %>
-    "url": "<%= @listing.external_url %>",
-    "priceRange": "<%= @listing.price_range if @listing.price_range.present? %>"
+    "url": "<%= listing_url(@listing) %>",
+    "sameAs": "<%= @listing.external_url %>",
+    <% if @listing.price_range.present? %>
+    "priceRange": "<%= @listing.price_range %>",
+    <% end %>
+    "accommodationCategory": "<%= @listing.view_type_display %>",
+    "amenityFeature": [
+      {
+        "@type": "LocationFeatureSpecification",
+        "name": "<%= @listing.view_type_display %> View",
+        "value": true
+      }
+    ]<% if @listing.verified? %>,
+    "hasCredential": {
+      "@type": "EducationalOccupationalCredential",
+      "name": "Verified Listing"
+    }<% end %>
   }
   </script>
 <% end %>

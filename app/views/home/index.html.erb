@@ -143,3 +143,50 @@
     </button>
   </div>
 </section>
+
+<!-- JSON-LD Schema for Homepage -->
+<% content_for :head do %>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Views",
+    "description": "Find and book accommodations with amazing views from around North America",
+    "url": "<%= root_url %>",
+    "publisher": <%= raw organization_schema.to_json %>,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "<%= search_listings_url %>?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Views",
+    "url": "<%= root_url %>",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "<%= request.base_url %>/icon.png"
+    },
+    "description": "Find and book accommodations with amazing views",
+    "foundingDate": "2025",
+    "areaServed": "North America",
+    "serviceType": "Accommodation Booking",
+    "knowsAbout": [
+      "Scenic Accommodations",
+      "Vacation Rentals",
+      "Mountain Views",
+      "Ocean Views",
+      "Lake Views",
+      "Travel Booking"
+    ]
+  }
+  </script>
+<% end %>
